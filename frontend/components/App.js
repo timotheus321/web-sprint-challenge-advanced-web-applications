@@ -104,7 +104,7 @@ export default function App() {
       headers: {
         'Content-Type': 'application/json',
         // Include the token from local storage in the Authorization header
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Authorization': `${localStorage.getItem('token')}`
       },
     })
       .then(response => {
@@ -121,10 +121,10 @@ export default function App() {
   
         if (data) {
           // If there was data in the response, set the articles
-          setArticles(data);
-  
+          setArticles(data.articles);
+         
           // Set a success message
-          setMessage('Articles fetched successfully');
+          setMessage(data.message);
         }
       })
       .catch(error => {
@@ -133,16 +133,16 @@ export default function App() {
         setMessage(`Error: ${error.message}`);
       });
   }
-  useEffect(() => {
-    getArticles();
-  }, []);
-  // const postArticle = article => {
-  //   // ✨ implement
-  //   // The flow is very similar to the `getArticles` function.
-  //   // You'll know what to do! Use log statements or breakpoints
-  //   // to inspect the response from the server.
+  // useEffect(() => {
+  //   getArticles();
+  // }, []);
+  // // const postArticle = article => {
+  // //   // ✨ implement
+  // //   // The flow is very similar to the `getArticles` function.
+  // //   // You'll know what to do! Use log statements or breakpoints
+  // //   // to inspect the response from the server.
     
-  // }
+  // // }
   const postArticle = article => {
     // Clear any existing messages
     setMessage('');
@@ -289,11 +289,18 @@ export default function App() {
           <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
         </nav>
         <Routes>
-          <Route path="/" element={<LoginForm />} />
+          <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm postArticle={postArticle}/>
-              <Articles articles={articles} updateArticle={updateArticle} deleteArticle={deleteArticle}/>
+              <ArticleForm postArticle={postArticle}
+               updateArticle={updateArticle}
+               currentArticleId={currentArticleId}/>
+              <Articles articles={articles} 
+                        getArticles={getArticles}
+                        updateArticle={updateArticle} 
+                        deleteArticle={deleteArticle} 
+                        setCurrentArticleId={setCurrentArticleId} 
+                        currentArticleId={currentArticleId}/>
             </>
           } />
         </Routes>
