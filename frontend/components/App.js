@@ -92,13 +92,9 @@ export default function App() {
   //   // Don't forget to turn off the spinner!
   // }
   const getArticles = () => {
-    // Clear any existing messages
+    
     setMessage('');
-  
-    // Turn on the spinner
     setSpinnerOn(true);
-  
-    // Fetch the articles from the server
     fetch(articlesUrl, {
       method: 'GET',
       headers: {
@@ -133,11 +129,10 @@ export default function App() {
         setMessage(`Error: ${error.message}`);
       });
   }
-  // useEffect(() => {
-  //   getArticles();
-  // }, []);
+  
   // // const postArticle = article => {
   // //   // ✨ implement
+  
   // //   // The flow is very similar to the `getArticles` function.
   // //   // You'll know what to do! Use log statements or breakpoints
   // //   // to inspect the response from the server.
@@ -156,7 +151,7 @@ export default function App() {
       headers: {
         'Content-Type': 'application/json',
         // Include the token from local storage in the Authorization header
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Authorization': `${localStorage.getItem('token')}`
       },
       body: JSON.stringify(article),
     })
@@ -171,14 +166,12 @@ export default function App() {
       .then(data => {
         // Turn off the spinner
         setSpinnerOn(false);
-  
-        if (data) {
           // If there was data in the response, add the new article to the articles state
-          setArticles(prevArticles => [...prevArticles, data]);
+          setArticles([...articles, data.article]);
   
           // Set a success message
-          setMessage('Article posted successfully');
-        }
+          setMessage(data.message);
+        
       })
       .catch(error => {
         // Handle any other errors
@@ -203,7 +196,7 @@ export default function App() {
     headers: {
       'Content-Type': 'application/json',
       // Include the token from local storage in the Authorization header
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
+      'Authorization': `${localStorage.getItem('token')}`
     },
     body: JSON.stringify(article),
   })
@@ -219,13 +212,12 @@ export default function App() {
       // Turn off the spinner
       setSpinnerOn(false);
 
-      if (data) {
+    
         // If there was data in the response, update the article in the articles state
-        setArticles(prevArticles => prevArticles.map(a => a.id === article_id ? data : a));
-
+        setArticles(prevArticles => prevArticles.map(a => a.article_id === article_id ? data : a));
         // Set a success message
-        setMessage('Article updated successfully');
-      }
+        setMessage(data.message);
+    
     })
     .catch(error => {
       // Handle any other errors
@@ -275,6 +267,7 @@ export default function App() {
       setMessage(`Error: ${error.message}`);
     });
   }
+  const currentArticle = articles.find(article => article.article_id === currentArticleId);
 
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
@@ -294,7 +287,10 @@ export default function App() {
             <>
               <ArticleForm postArticle={postArticle}
                updateArticle={updateArticle}
-               currentArticleId={currentArticleId}/>
+               setCurrentArticleId={setCurrentArticleId}
+               currentArticleId={currentArticleId}
+               currentArticle={currentArticle}
+               />
               <Articles articles={articles} 
                         getArticles={getArticles}
                         updateArticle={updateArticle} 

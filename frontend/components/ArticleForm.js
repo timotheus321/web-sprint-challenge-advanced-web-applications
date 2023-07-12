@@ -15,18 +15,22 @@ export default function ArticleForm(props) {
     // values of the form. If it's not, we should reset the form back to initial values.
     if (currentArticle) {
       setValues({
-        title: currentArticle.title,
+        topic: currentArticle.topic,
         text: currentArticle.text,
-        topic: currentArticle.topic
+        title: currentArticle.title,
+        
       });
     } else {
       setValues(initialFormValues);
     }
-  }, [currentArticle]);
+  }, []);
 
   const onChange = evt => {
     const { id, value } = evt.target
     setValues({ ...values, [id]: value })
+    if (currentArticle) {
+      setCurrentArticleId({ ...currentArticle, [id]: value });
+    }
   }
 
   const onSubmit = evt => {
@@ -35,11 +39,12 @@ export default function ArticleForm(props) {
     // We must submit a new post or update an existing one,
     // depending on the truthyness of the `currentArticle` prop.
     if (currentArticle) {
-      updateArticle(values);
+      updateArticle({ article_id: currentArticle.article_id, article: values });
     } else {
       postArticle(values);
     }
     setValues(initialFormValues)
+    setCurrentArticleId(null);
   }
 
   const isDisabled = () => {
@@ -51,7 +56,7 @@ export default function ArticleForm(props) {
   return (
     // ✨ fix the JSX: make the heading display either "Edit" or "Create"
     // and replace Function.prototype with the correct function
-    <form id="form" onSubmit={onSubmit}>
+    <form id="form" onSubmit={onSubmit} key={currentArticle ? currentArticle.article_id : 'create'}>
       <h2>{currentArticle ? 'Edit' : 'Create'}Article</h2>
       <input
         maxLength={50}
