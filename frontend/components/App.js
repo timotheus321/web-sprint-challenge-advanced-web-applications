@@ -114,6 +114,7 @@ export default function App() {
       .then(data => {
         // Turn off the spinner
         setSpinnerOn(false);
+          
           setArticles(data.articles);
           // Set a success message
           setMessage(data.message);
@@ -208,7 +209,11 @@ export default function App() {
       setSpinnerOn(false);
         // If there was data in the response, update the article in the articles state
         console.log(data)
-        setArticles(data.articles);
+        setArticles(articles => {
+          return articles.map(art => {
+            return art.article_id === article_id ? data.article : art
+          })
+        });
         // Set a success message
         setMessage(data.message);
     
@@ -234,7 +239,7 @@ export default function App() {
     headers: {
       'Content-Type': 'application/json',
       // Include the token from local storage in the Authorization header
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
+      'Authorization': `${localStorage.getItem('token')}`
     },
   })
     .then(response => {
@@ -245,15 +250,20 @@ export default function App() {
         return response.json();
       }
     })
-    .then(() => {
+    .then((data) => {
       // Turn off the spinner
       setSpinnerOn(false);
 
       // If the request was successful, remove the article from the articles state
-      setArticles(prevArticles => prevArticles.filter(a => a.id !== article_id));
-
+      //setArticles(prevArticles => prevArticles.filter(a => a.id !== article_id));
+      setArticles(articles => {
+        return articles.filter(art => {
+          return art.article_id != article_id
+        })
+      })
       // Set a success message
-      setMessage('Article deleted successfully');
+      console.log("checking data", data);
+      setMessage(data.message);
     })
     .catch(error => {
       // Handle any other errors
@@ -263,7 +273,7 @@ export default function App() {
   }
   
 
-    console.log("looking for articles:",articles)
+    
   //const currentArticle = articles.find(article => article.article_id === currentArticleId);
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
