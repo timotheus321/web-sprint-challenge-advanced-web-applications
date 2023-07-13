@@ -23,14 +23,12 @@ export default function ArticleForm(props) {
     } else {
       setValues(initialFormValues);
     }
-  }, []);
+  }, [currentArticle]);
 
   const onChange = evt => {
     const { id, value } = evt.target
     setValues({ ...values, [id]: value })
-    if (currentArticle) {
-      setCurrentArticleId({ ...currentArticle, [id]: value });
-    }
+   
   }
 
   const onSubmit = evt => {

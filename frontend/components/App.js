@@ -114,14 +114,10 @@ export default function App() {
       .then(data => {
         // Turn off the spinner
         setSpinnerOn(false);
-  
-        if (data) {
-          // If there was data in the response, set the articles
           setArticles(data.articles);
-         
           // Set a success message
           setMessage(data.message);
-        }
+        
       })
       .catch(error => {
         // Handle any other errors
@@ -180,16 +176,15 @@ export default function App() {
       });
   }
   
-
+  
   const updateArticle = ({ article_id, article }) => {
     // ✨ implement
     // You got this!
       // Clear any existing messages
+      console.log("edited what were",article)
   setMessage('');
-
   // Turn on the spinner
   setSpinnerOn(true);
-
   // Make a PUT request to the articles endpoint
   fetch(`${articlesUrl}/${article_id}`, {
     method: 'PUT',
@@ -211,10 +206,9 @@ export default function App() {
     .then(data => {
       // Turn off the spinner
       setSpinnerOn(false);
-
-    
         // If there was data in the response, update the article in the articles state
-        setArticles(prevArticles => prevArticles.map(a => a.article_id === article_id ? data : a));
+        console.log(data)
+        setArticles(data.articles);
         // Set a success message
         setMessage(data.message);
     
@@ -267,8 +261,10 @@ export default function App() {
       setMessage(`Error: ${error.message}`);
     });
   }
-  const currentArticle = articles.find(article => article.article_id === currentArticleId);
+  
 
+    console.log("looking for articles:",articles)
+  //const currentArticle = articles.find(article => article.article_id === currentArticleId);
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
@@ -289,7 +285,7 @@ export default function App() {
                updateArticle={updateArticle}
                setCurrentArticleId={setCurrentArticleId}
                currentArticleId={currentArticleId}
-               currentArticle={currentArticle}
+               currentArticle={articles.find(article => article.article_id === currentArticleId)}
                />
               <Articles articles={articles} 
                         getArticles={getArticles}
